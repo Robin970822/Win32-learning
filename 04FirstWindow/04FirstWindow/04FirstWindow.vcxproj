@@ -76,7 +76,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="my.cpp" />
+    <ClCompile Include="04FirstWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
