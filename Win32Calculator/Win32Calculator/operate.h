@@ -12,7 +12,7 @@ void Equal(HWND, HWND, HWND, wstring, bool&);
 
 // 处理小数点
 // 判断主屏幕中是否有小数点
-void hasDot(HWND, HWND, HWND, bool&);
+void Dot(HWND, HWND, HWND, bool&);
 
 // 处理根号
 void Sqrt(HWND, HWND, HWND, bool&);

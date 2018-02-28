@@ -33,7 +33,7 @@ void Create(HWND &hWnd, HWND &screen_hwnd_main, HWND &screen_hwnd_sub, HWND &btn
 	//主屏幕
 	screen_hwnd_main = CreateWindowEx(
 		WS_EX_CLIENTEDGE | WS_EX_RIGHT, _T("Static"), _T("0"),
-		WS_VISIBLE | WS_CHILD, 10, 10, 380, 30, hWnd, (HMENU)SCREEN_ID_MAIN, hInst, NULL
+		WS_VISIBLE | WS_CHILD, 10, 40, 380, 75, hWnd, (HMENU)SCREEN_ID_MAIN, hInst, NULL
 		);
 	//辅屏幕
 	screen_hwnd_sub = CreateWindowEx(
@@ -41,7 +41,7 @@ void Create(HWND &hWnd, HWND &screen_hwnd_main, HWND &screen_hwnd_sub, HWND &btn
 		WS_VISIBLE | WS_CHILD, 10, 10, 380, 30, hWnd, (HMENU)SCREEN_ID_SUB, hInst, NULL
 		);
 	//创建按键
-	btn_hwnd_ce = CreateWindow(_T("Button"), _T("AC"), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 10, 130, 95, 95, hWnd, (HMENU)BTN_ID_CLEAR, hInst, NULL);
+	btn_hwnd_ce = CreateWindow(_T("Button"), _T("CE"), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 10, 130, 95, 95, hWnd, (HMENU)BTN_ID_CLEAR, hInst, NULL);
 	btn_hwnd_sqrt = CreateWindow(_T("Button"), _T("√"), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 105, 130, 95, 95, hWnd, (HMENU)BTN_ID_SQRT, hInst, NULL);
 	btn_hwnd_mod = CreateWindow(_T("Button"), _T("Mod"), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 200, 130, 95, 95, hWnd, (HMENU)BTN_ID_MOD, hInst, NULL);
 	btn_hwnd_plus = CreateWindow(_T("Button"), _T("+"), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 295, 130, 95, 95, hWnd, (HMENU)BTN_ID_PLUS, hInst, NULL);
