@@ -1,8 +1,8 @@
-// 04FirstWindow.cpp : 定义应用程序的入口点。
+// 04GDI.cpp : 定义应用程序的入口点。
 //
 
 #include "stdafx.h"
-#include "04FirstWindow.h"
+#include "04GDI.h"
 
 #define MAX_LOADSTRING 100
 
@@ -27,10 +27,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     // TODO: 在此放置代码。
 
-
     // 初始化全局字符串
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_MY04FIRSTWINDOW, szWindowClass, MAX_LOADSTRING);
+    LoadStringW(hInstance, IDC_MY04GDI, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
     // 执行应用程序初始化: 
@@ -39,7 +38,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_MY04FIRSTWINDOW));
+    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_MY04GDI));
 
     MSG msg;
 
@@ -74,10 +73,10 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_MY04FIRSTWINDOW));
+    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_MY04GDI));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_MY04FIRSTWINDOW);
+    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_MY04GDI);
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -124,16 +123,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	WCHAR szText[] = _T("最简单的窗口程序！");
-	static wstring str;
+#define SEGMENTS  500
+#define PI 3.1415923
+
 	switch (message)
     {
-	case WM_CREATE:
-		{
-			// 设置窗口的标题
-			::SetWindowText(hWnd, _T("打字程序"));
-			return 0;
-		}
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -153,38 +147,70 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_PAINT:
         {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: 在此处添加使用 hdc 的任何绘图代码...
-			// 设置输出文本的背景颜色和文字颜色
-			::SetTextColor(hdc, RGB(255, 0, 0));
-			::SetBkColor(hdc, ::GetSysColor(COLOR_3DFACE));
-			//显示文字
-			::TextOut(hdc, 0, 0, str.c_str(), str.length());
-            EndPaint(hWnd, &ps);
+			PAINTSTRUCT ps;
+			HDC hdc = hdc = BeginPaint(hWnd, &ps);
+			RECT rt;
+
+			HPEN hPen = (HPEN)::GetStockObject(NULL_PEN);
+			::SelectObject(hdc, hPen);
+			int cxClient, cyClient;
+			int x, y;
+			POINT pt[SEGMENTS];
+
+            // 取得窗口客户区的大小
+			GetClientRect(hWnd, &rt);
+			cxClient = rt.right - rt.left;
+			cyClient = rt.bottom - rt.top;
+
+			HBITMAP hBitmap = (HBITMAP)LoadImage(NULL, _T("Bitmap.bmp"), IMAGE_BITMAP, cxClient/2, cyClient/2, LR_LOADFROMFILE);
+			HBRUSH brush1 = ::CreatePatternBrush(hBitmap);
+			::SelectObject(hdc, brush1);
+			Rectangle(hdc, 0, 0, cxClient / 2, cyClient / 2);
+
+			HBRUSH brush2 = ::CreateSolidBrush(RGB(59, 67, 78));
+			::SelectObject(hdc, brush2);
+			Rectangle(hdc, cxClient / 2, 0, cxClient, cyClient / 2);
+
+			HBRUSH brush3 = ::CreateSolidBrush(RGB(78, 100, 52));
+			::SelectObject(hdc, brush3);
+			Rectangle(hdc, 0, cyClient / 2, cxClient / 2, cyClient);
+
+			HBRUSH brush4 = ::CreateSolidBrush(RGB(68, 7, 101));
+			::SelectObject(hdc, brush4);
+			Rectangle(hdc, cxClient / 2, cyClient / 2, cxClient, cyClient);
+
+
+			// 画sin()
+			SelectObject(hdc, (HPEN)::GetStockObject(BLACK_PEN));
+			// 画横坐标轴
+			MoveToEx(hdc, cxClient / 2, cyClient/4, NULL);
+			LineTo(hdc, cxClient, cyClient/4);
+			// 找出500个点的坐标
+			for (size_t i = 0; i < SEGMENTS; i++)
+			{
+				pt[i].x = cxClient/2 *i / SEGMENTS + cxClient/2;
+				pt[i].y = (cyClient / 4) * (1 - sin(2 * PI * i / SEGMENTS));
+			}
+			// 将各店连在一起
+			Polyline(hdc, pt, SEGMENTS);
+
+			// 画椭圆
+			SelectObject(hdc, (HBRUSH)::GetStockObject(NULL_BRUSH));
+			Ellipse(hdc, 0, cyClient / 2, cxClient / 2, cyClient);
+
+			// 画多边形
+			POINT lpPoint[6];
+			for (size_t i = 0; i < sizeof(lpPoint); i++)
+			{
+				lpPoint[i].x = cxClient/4 * cos(i * PI / 3 + PI / 6) + cxClient * 3 / 4;
+				lpPoint[i].y = cyClient/4 * sin(i * PI / 3 + PI / 6) + cyClient * 3 / 4;
+			}
+			Polygon(hdc, lpPoint, sizeof(lpPoint));
+
+			EndPaint(hWnd, &ps);
 			return 0;
         }
         break;
-	case WM_CHAR:
-		{
-			// 保存ansi码
-			str = str + WCHAR(wParam);
-			// 使整个客户去无效
-			::InvalidateRect(hWnd, NULL, 0);
-			return 0;
-		}
-	case WM_LBUTTONDOWN:
-		{
-			WCHAR szPoint[56];
-			wsprintf(szPoint, _T("X=%d,Y=%d"), LOWORD(lParam), HIWORD(lParam));
-			str = szPoint;
-			if (wParam & MK_SHIFT)
-			{
-				str = str + _T(" Shift Key is down");
-			}
-			::InvalidateRect(hWnd, NULL, 1);
-			return 0;
-		}
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
